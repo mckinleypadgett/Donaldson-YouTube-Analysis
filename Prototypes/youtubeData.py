@@ -37,9 +37,11 @@ def get_channel_statistics(youtube, channel_ids):
 
 channel_statistics = get_channel_statistics(youtube, channel_ids)
 
-channel_stats = pd.DataFrame(channel_statistics)
+channel_stats_df = pd.DataFrame(channel_statistics)
+channel_stats_df.to_csv('./channel_stats.csv')
 
-playlist_id = channel_stats.loc[channel_stats['Channel_name']=='Arctic Cat', 'playlist_id'].iloc[0]
+
+playlist_id = channel_stats_df.loc[channel_stats['Channel_name']=='Arctic Cat', 'playlist_id'].iloc[0]
 
 
 ## Function to get all video IDs from a channel
@@ -77,7 +79,10 @@ def get_video_ids(youtube, playlist_id):
 
     return video_ids
 
-print(get_video_ids(youtube, playlist_id))
+all_video_ids = get_video_ids(youtube, playlist_id)
+videos_df = pd.DataFrame(all_video_ids)
+videos_df.to_csv('./all_videos.csv')
+print(videos_df)
 
 def get_comments(youtube, channel_id):
 
@@ -96,12 +101,13 @@ def get_comments(youtube, channel_id):
 
 comments = (get_comments(youtube, channel_id))
 
-all_comments = pd.DataFrame(comments)
+all_comments_df = pd.DataFrame(comments)
+all_comments_df.to_csv('./all_comments.csv')
 
-print(all_comments)
-channel_statistics = get_channel_statistics(youtube, channel_ids)
+print(all_comments_df)
+#channel_statistics = get_channel_statistics(youtube, channel_ids)
 
-channel_stats = pd.DataFrame(channel_statistics)
+#channel_stats = pd.DataFrame(channel_statistics)
 
-print(channel_stats)
+print(channel_stats_df)
 
