@@ -41,7 +41,7 @@ channel_stats_df = pd.DataFrame(channel_statistics)
 channel_stats_df.to_csv('./channel_stats.csv')
 
 
-playlist_id = channel_stats_df.loc[channel_stats['Channel_name']=='Arctic Cat', 'playlist_id'].iloc[0]
+playlist_id = channel_stats_df.loc[channel_stats_df['Channel_name']=='Arctic Cat', 'playlist_id'].iloc[0]
 
 
 ## Function to get all video IDs from a channel
