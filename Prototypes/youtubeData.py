@@ -5,9 +5,11 @@ import pandas as pd
 import seaborn as sns
 import os
 import numpy as np
+from decouple import config
 
 
-api_key = 'AIzaSyBwxyfaOh3wkFlOgG4TY6R2L-7wKYF-W78' # YouTube Data API v3
+api_key = config('API_KEY') # YouTube Data API v3
+print(api_key)
 
 # This single string and list of channel ids is for testing purposes at the moment. Need to gather additional channel ids for rest of requested companies
 channel_id = 'UCZNvqiGznGApSxsVHxw9hrA' # Arctic Cat
