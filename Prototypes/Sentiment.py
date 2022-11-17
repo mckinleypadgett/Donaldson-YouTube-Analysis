@@ -27,7 +27,7 @@ print(sentiment_dict)
             # every non-english sentence returns a compound score of 0
 
 
-with open("/Users/andrewdifranco/Desktop/all_comments.txt", "r") as f:
+with open("all_comments.csv", "r") as f:
 
     newList = []    # stores comments
     likeList = []   # stores No. of likes per comment

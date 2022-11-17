@@ -1,7 +1,11 @@
 # Credit: This iteration includes idea presented by Thoufiq Mohammed in this video https://www.youtube.com/watch?v=SwSbnmqk3zY
+from subprocess import ABOVE_NORMAL_PRIORITY_CLASS
 from googleapiclient.discovery import build
 import pandas as pd
 import seaborn as sns
+import os
+import numpy as np
+
 
 api_key = 'AIzaSyBwxyfaOh3wkFlOgG4TY6R2L-7wKYF-W78' # YouTube Data API v3
 
@@ -38,8 +42,7 @@ def get_channel_statistics(youtube, channel_ids):
 channel_statistics = get_channel_statistics(youtube, channel_ids)
 
 channel_stats_df = pd.DataFrame(channel_statistics)
-channel_stats_df.to_csv('./channel_stats.csv')
-
+channel_stats_df.to_csv('./channel_stats.csv', header=channel_stats_df.columns, index=False, encoding='utf-8')
 
 playlist_id = channel_stats_df.loc[channel_stats_df['Channel_name']=='Arctic Cat', 'playlist_id'].iloc[0]
 
