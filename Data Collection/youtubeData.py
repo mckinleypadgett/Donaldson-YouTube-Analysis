@@ -1,15 +1,8 @@
 # Credit: This iteration includes idea presented by Thoufiq Mohammed in this video https://www.youtube.com/watch?v=SwSbnmqk3zY
-from subprocess import ABOVE_NORMAL_PRIORITY_CLASS
 from googleapiclient.discovery import build
 import pandas as pd
-import seaborn as sns
-import os
-import numpy as np
-from decouple import config
 
-
-api_key = config('API_KEY') # YouTube Data API v3
-print(api_key)
+api_key = 'AIzaSyBwxyfaOh3wkFlOgG4TY6R2L-7wKYF-W78' # YouTube Data API v3
 
 # This single string and list of channel ids is for testing purposes at the moment. Need to gather additional channel ids for rest of requested companies
 channel_id = 'UCZNvqiGznGApSxsVHxw9hrA' # Arctic Cat
@@ -44,7 +37,8 @@ def get_channel_statistics(youtube, channel_ids):
 channel_statistics = get_channel_statistics(youtube, channel_ids)
 
 channel_stats_df = pd.DataFrame(channel_statistics)
-channel_stats_df.to_csv('./channel_stats.csv', header=channel_stats_df.columns, index=False, encoding='utf-8')
+channel_stats_df.to_csv('./channel_stats.csv')
+
 
 playlist_id = channel_stats_df.loc[channel_stats_df['Channel_name']=='Arctic Cat', 'playlist_id'].iloc[0]
 
@@ -89,9 +83,10 @@ videos_df = pd.DataFrame(all_video_ids)
 videos_df.to_csv('./all_videos.csv')
 print(videos_df)
 
+
 def get_comments(youtube, channel_id):
 
-    comments = []
+    all_comments_data = []
 
     request = youtube.commentThreads().list(
                 part='snippet, replies',
@@ -100,19 +95,44 @@ def get_comments(youtube, channel_id):
     response = request.execute()
 
     for i in range(len(response['items'])):
-        comments.append(response['items'][i]['snippet']['topLevelComment']['snippet']['textOriginal'])
+        comments_data = dict(comments = response['items'][i]['snippet']['topLevelComment']['snippet']['textOriginal'],
+                        channel_id = response['items'][i]['snippet']['channelId'],
+                        video_id = response['items'][i]['snippet']['videoId'])
+        all_comments_data.append(comments_data)
 
-    return comments
+    return all_comments_data
 
 comments = (get_comments(youtube, channel_id))
+
 
 all_comments_df = pd.DataFrame(comments)
 all_comments_df.to_csv('./all_comments.csv')
 
+comments_channel_ids = (all_comments_df.loc[:, "channel_id"])
+
+def get_channel_name(youtube, comments_channel_ids):
+    channel_name_array = []
+    request = youtube.channels().list(
+                part='snippet,contentDetails,statistics',
+                id= ','.join(comments_channel_ids))
+    response = request.execute()
+    for i in range(len(response['items'])):      
+        channel_name = dict(channel_name = response['items'][i]['snippet']['title'])
+        channel_name_array.append(channel_name)
+
+    return channel_name_array
+
+comments_channel_names = (get_channel_name(youtube, comments_channel_ids))
+print (comments_channel_names)
+#all_comments_df['Channel Name'] = channel_name
+
+
+
+
 print(all_comments_df)
+
 #channel_statistics = get_channel_statistics(youtube, channel_ids)
 
 #channel_stats = pd.DataFrame(channel_statistics)
 
 print(channel_stats_df)
-
