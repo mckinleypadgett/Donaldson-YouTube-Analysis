@@ -2,16 +2,14 @@
 from subprocess import ABOVE_NORMAL_PRIORITY_CLASS
 from googleapiclient.discovery import build
 import pandas as pd
-import seaborn as sns
 import os
 import numpy as np
-from decouple import config
+import csv
 
-
-api_key = config('API_KEY') # YouTube Data API v3
-print(api_key)
+api_key = 'AIzaSyBwxyfaOh3wkFlOgG4TY6R2L-7wKYF-W78' # YouTube Data API v3
 
 # This single string and list of channel ids is for testing purposes at the moment. Need to gather additional channel ids for rest of requested companies
+"""
 channel_id = 'UCZNvqiGznGApSxsVHxw9hrA' # Arctic Cat
 channel_ids = ['UCfe2d71EQLZXhOLY9N7aqfg', # Donaldson
                'UC1D6AaYUTdR86tngI_HsVig', # AGCO Power
@@ -19,10 +17,25 @@ channel_ids = ['UCfe2d71EQLZXhOLY9N7aqfg', # Donaldson
                'UCZNvqiGznGApSxsVHxw9hrA', # Arctic Cat
                'UCcsfE910TN0QI6ae4dWXI6w'  # Ashok Leyland
               ]
-
+"""
+channelId = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/data/companies1.csv',
+                        usecols = ["UCvUbaC8BjzIGIIzI3gGq5BA"])
 # create a build service to pull data from 
 youtube = build('youtube', 'v3', developerKey=api_key)
 
+comments = []
+for i in channelId:
+    request = youtube.commentThreads().list(
+                part='snippet, replies',
+                allThreadsRelatedToChannelId = i,
+                maxResults = 100)
+    response = request.execute()
+
+    for com in range(len(response['items'])):
+        comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+
+    
+"""
 ## Function to get channel statistics
 def get_channel_statistics(youtube, channel_ids):
     all_channel_data = []
@@ -89,13 +102,13 @@ videos_df = pd.DataFrame(all_video_ids)
 videos_df.to_csv('./all_videos.csv')
 print(videos_df)
 
-def get_comments(youtube, channel_id):
+def get_comments(youtube, channel_ids):
 
     comments = []
 
     request = youtube.commentThreads().list(
                 part='snippet, replies',
-                allThreadsRelatedToChannelId = channel_id,
+                allThreadsRelatedToChannelId = channel_ids,
                 maxResults = 50)
     response = request.execute()
 
@@ -104,7 +117,7 @@ def get_comments(youtube, channel_id):
 
     return comments
 
-comments = (get_comments(youtube, channel_id))
+comments = (get_comments(youtube, channel_ids))
 
 all_comments_df = pd.DataFrame(comments)
 all_comments_df.to_csv('./all_comments.csv')
@@ -115,3 +128,4 @@ print(all_comments_df)
 #channel_stats = pd.DataFrame(channel_statistics)
 
 print(channel_stats_df)
+"""

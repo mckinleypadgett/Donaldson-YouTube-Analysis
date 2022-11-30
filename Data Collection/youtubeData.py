@@ -10,7 +10,7 @@ channel_ids = ['UCfe2d71EQLZXhOLY9N7aqfg', # Donaldson
                'UC1D6AaYUTdR86tngI_HsVig', # AGCO Power
                'UCgWfMSM_i80aJ_Yu5XVfb1A', # Agrale S.A. 
                'UCZNvqiGznGApSxsVHxw9hrA', # Arctic Cat
-               'UCcsfE910TN0QI6ae4dWXI6w'  # Ashok Leyland
+               'UCcsfE910TN0QI6ae4dWXI6w', # Ashok Leyland
               ]
 
 # create a build service to pull data from 
@@ -84,19 +84,19 @@ videos_df.to_csv('./all_videos.csv')
 print(videos_df)
 
 
-def get_comments(youtube, channel_id):
+def get_comments(youtube, channel_ids):
 
     all_comments_data = []
 
     request = youtube.commentThreads().list(
                 part='snippet, replies',
-                allThreadsRelatedToChannelId = channel_id,
+                allThreadsRelatedToChannelId = channel_ids,
                 maxResults = 50)
     response = request.execute()
 
     for i in range(len(response['items'])):
         comments_data = dict(comments = response['items'][i]['snippet']['topLevelComment']['snippet']['textOriginal'],
-                        channel_id = response['items'][i]['snippet']['channelId'],
+                        channel_ids = response['items'][i]['snippet']['channelId'],
                         video_id = response['items'][i]['snippet']['videoId'])
         all_comments_data.append(comments_data)
 
@@ -108,6 +108,7 @@ comments = (get_comments(youtube, channel_id))
 all_comments_df = pd.DataFrame(comments)
 all_comments_df.to_csv('./all_comments.csv')
 
+"""
 comments_channel_ids = (all_comments_df.loc[:, "channel_id"])
 
 def get_channel_name(youtube, comments_channel_ids):
@@ -136,3 +137,4 @@ print(all_comments_df)
 #channel_stats = pd.DataFrame(channel_statistics)
 
 print(channel_stats_df)
+"""
