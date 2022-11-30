@@ -14,26 +14,6 @@ def gather_data():
 		channel_ids.append(row[1])
 
 
-# Gather statistics about a YouTube channel
-#def get_channel_statistics(youtube, channel_ids):
-#	all_channel_data = []
-#	request = youtube.channels().list(
-#				part="snippet,contentDetails,statistics",
-#				id =','.join(channel_ids),
-#				maxResults = 50)
-#	response = request.execute()
-
-#	for i in range(len(response['items'])):
-#		channel_data = dict(channel_id = response['items'][i]['id'],
-#				    channel_name = response['items'][i]['snippet']['title'],
-#					upload_playlist_id = response['items'][i]['contentDetails']['relatedPlaylists']['uploads'],
-#					subscribers = response['items'][i]['statistics']['subscriberCount'],
-#					view_count = response['items'][i]['statistics']['viewCount'],
-#					video_count = response['items'][i]['statistics']['videoCount'])
-#		all_channel_data.append(channel_data)
-
-#		return all_channel_data
-
 def get_channel_statistics(youtube, channel_ids):
 	all_channel_data = []
 	request = youtube.channels().list(
@@ -41,8 +21,6 @@ def get_channel_statistics(youtube, channel_ids):
 				id= ','.join(channel_ids),
 				maxResults = 50)
 	response = request.execute()
-
-   # print(response)
 
 	for i in range(len(response['items'])):
 		channel_data = dict(Channel_name = response['items'][i]['snippet']['title'],
@@ -52,25 +30,6 @@ def get_channel_statistics(youtube, channel_ids):
 					Total_videos = response['items'][i]['statistics']['videoCount'],
 					playlist_id = response['items'][i]['contentDetails']['relatedPlaylists']['uploads'])
 		all_channel_data.append(channel_data)
-
-	#next_page_token = response['nextPageToken']
-	#more_pages = True
-
-	#while more_pages:
-	#    if next_page_token is None:
-	#        more_pages = False
-	#    else:
-	#        request = youtube.channels().list(
-	#            part='snippet,contentDetails,statistics',
-	#            id= ','.join(channel_ids), 
-	#            maxResults = 50,
-	#            pageToken = next_page_token)
-	#        response = request.execute()
-
-	#        for i in range(len(response['items'])):
-	#            all_channel_data.append(response['items'][i]['contentDetails']['videoId'])
-
-	#        next_page_token = response.get('nextPageToken')
 
 	return all_channel_data
 
@@ -82,8 +41,6 @@ def get_video_ids(youtube, playlist_ids):
 				playlistId = playlist_ids, 
 				maxResults = 50)
 	response = request.execute()
-
-	#video_ids = []
 
 	for i in range(len(response['items'])):
 		video_data = dict(channel_id = response['items'][i]['snippet']['channelId'],
@@ -117,51 +74,6 @@ def get_video_ids(youtube, playlist_ids):
 
 				next_page_token = response.get('nextpagetoken')
 	return all_video_data
-
-
-	
-#def get_video_ids(youtube, upload_playlist_id):
-#	all_video_data = []
-#	request = youtube.playlistItems().list(
-#		part='contentDetails',
-#		playlistId = upload_playlist_id,
-#		maxResults = 50)
-
-#	response = request.execute()
-
-#	for i in range(len(response['items]'])):
-#		video_data = dict(channel_id = response['items'][i]['snippet']['channelID'],
-#					channel_name = response['items'][i]['channelTitle'],
-#					video_title = response['items'][i]['snippet']['title'],
-#					video_id = response['items'][i]['contentDetails']['videoID'],
-#					publish_date = response['items'][i]['snippet']['publishedAt'])
-#		all_video_data.append(video_data)
-	
-#	next_page_token = response['nextPageToken']
-#	more_pages = True
-
-#	while more_pages:
-#		if next_page_token is None:
-#			more_pages = False
-#		else:
-#			request = youtube.playlistItems().list(
-#				part="snippet,contentDetails",
-#				playlistID = upload_playlist_id,
-#				maxResults = 50,
-#				pageToken = next_page_token)
-#			response = request.exectue()
-
-#			for i in range(len(response['items'])):
-#				video_data = dict(channel_id = response['items'][i]['snippet']['channelID'],
-#					  channel_name = response['items'][i]['channelTitle'],
-#					  video_title = response['items'][i]['snippet']['title'],
-#					  video_id = response['items'][i]['contentDetails']['videoID'],
-#					  publish_date = ['items'][i]['snippet']['publishedAt'])
-#				all_video_data.append(video_data)
-
-#				next_page_token = response.get('nextPageToken')
-
-#	return all_video_data
 
 # Gather comments from a YouTube video
 def get_video_comments(youtube, videos):
