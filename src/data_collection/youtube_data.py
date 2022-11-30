@@ -4,7 +4,7 @@ from googleapiclient.discovery import build
 def get_channel_statistics(youtube, channels):
 	all_channel_data = []
 	request = youtube.channels().list(
-		part="snippet,contentDetails,statistics"
+		part="snippet,contentDetails,statistics",
 		id =','.join(channels))
 
 	response = request.execute()
@@ -79,7 +79,7 @@ def get_video_comments(youtube, videos):
 		comment_data = dict(video_id = response['items'][i]['snippet']['videoId'],
 					  comment = response['items'][i]['snippet']['textOriginal'],
 					  like_count = response['items'][i]['snippet']['likeCount'])
-		all_comment_data.append(coment_data)
+		all_comment_data.append(comment_data)
 
 	next_page_token = response['nextPageToken']
 	more_pages = True
@@ -90,7 +90,7 @@ def get_video_comments(youtube, videos):
 		else:
 			request = youtube.commentThreads().list(
 				part="snippet,replies",
-				videoId=','.join(video_ids),
+				videoId=','.join(videos),
 				maxResults = 50)
 
 			response = request.execute()
@@ -101,7 +101,7 @@ def get_video_comments(youtube, videos):
 						like_count = response['items'][i]['snippet']['likeCount'])
 				all_comment_data.append(comment_data)
 
-			next_page_token = respone.get('nextPageToken')
+			next_page_token = response.get('nextPageToken')
 
 	return all_comment_data
 
