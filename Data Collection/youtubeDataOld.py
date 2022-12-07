@@ -6,7 +6,7 @@ import os
 import numpy as np
 import csv
 
-api_key = 'AIzaSyBwxyfaOh3wkFlOgG4TY6R2L-7wKYF-W78' # YouTube Data API v3
+api_key = 'AIzaSyBUhj3Q0oNLijpRmti05xOVMpOVjL06wIg' # YouTube Data API v3
 
 # This single string and list of channel ids is for testing purposes at the moment. Need to gather additional channel ids for rest of requested companies
 """
@@ -18,12 +18,15 @@ channel_ids = ['UCfe2d71EQLZXhOLY9N7aqfg', # Donaldson
                'UCcsfE910TN0QI6ae4dWXI6w'  # Ashok Leyland
               ]
 """
-channelId = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/data/companies1.csv',
+channelId = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/companies1.csv',
                         usecols = ["UCvUbaC8BjzIGIIzI3gGq5BA"])
+channelID_2 = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/companies2.csv',
+                        usecols = ["UCcmHACp_jOo5-Mb3VVeDacw"])
 # create a build service to pull data from 
 youtube = build('youtube', 'v3', developerKey=api_key)
 
 comments = []
+
 for i in channelId:
     request = youtube.commentThreads().list(
                 part='snippet, replies',
@@ -33,6 +36,59 @@ for i in channelId:
 
     for com in range(len(response['items'])):
         comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+    
+    next_page_token = response.get('nextPageToken')
+    more_pages = True
+	
+    while more_pages:
+        if next_page_token is None:
+            more_pages = False
+        else:
+            request = youtube.commentThreads().list(
+                part='snippet, replies',
+                allThreadsRelatedToChannelId = i,
+                maxResults = 100,
+                pageToken = next_page_token)
+            response = request.execute()
+
+            for com in range(len(response['items'])):
+                comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+
+            next_page_token = response.get('nextPageToken')
+
+for j in channelID_2:
+    request = youtube.commentThreads().list(
+                part='snippet, replies',
+                allThreadsRelatedToChannelId = j,
+                maxResults = 100)
+    response = request.execute()
+
+    for com in range(len(response['items'])):
+        comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+    
+    next_page_token = response.get('nextPageToken')
+    more_pages = True
+	
+    while more_pages:
+        if next_page_token is None:
+            more_pages = False
+        else:
+            request = youtube.commentThreads().list(
+                part='snippet, replies',
+                allThreadsRelatedToChannelId = j,
+                maxResults = 100,
+                pageToken = next_page_token)
+            response = request.execute()
+
+            for com in range(len(response['items'])):
+                comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+
+            next_page_token = response.get('nextPageToken')
+
+comments_df = pd.DataFrame(comments)
+comments_df.to_csv('./all_comments.csv')
+
+
 
     
 """
