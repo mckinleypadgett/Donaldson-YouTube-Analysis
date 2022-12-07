@@ -7,17 +7,18 @@
 # this script will demonstrate how information is gathered from a clean .csv file and video_score is calculated
 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import pandas as pd
 
 obj = SentimentIntensityAnalyzer()
 
 # input string (youtube comment)
-sentence = "Kyle runs funny as hell👹"
+#sentence = "Kyle runs funny as hell👹"
 
 
-sentiment_dict = obj.polarity_scores(sentence)
+#sentiment_dict = obj.polarity_scores(sentence)
 
-print("Sentiment of sentence: ", end='')
-print(sentiment_dict)
+#print("Sentiment of sentence: ", end='')
+#print(sentiment_dict)
 
 # Output: "Sentiment of sentence: {'neg': 0.4, 'neu': 0.348, 'pos': 0.252, 'compound': -0.4019}"
 
@@ -27,8 +28,43 @@ print(sentiment_dict)
             # every non-english sentence returns a compound score of 0
 
 
-with open("all_comments.csv", "r") as f:
+with open("C:/Users/12532/Donaldson-Youtube-Analysis/all_comments.csv", encoding="utf8" ) as f:
+    newList = []    # stores comments
+    compound_sentiment = [] # stores the compound value per comment
+    negative_sentiment = []
+    positive_sentiment = []
+    neutral_sentiment = []
+     # populates likeList and newList array
+    for line in f:
+        if line[-1] == '\n':
+            i = line.find(',') + 1
+            newList.append(line[i:-1])  # saves the comment
 
+    # populates compound_sentiment array
+    count1 = 0
+    for i in newList:
+        #print(i)
+        sentiment_dict = obj.polarity_scores(i)
+        compound_sentiment.append(sentiment_dict['compound'])
+        negative_sentiment.append(sentiment_dict['neg'])
+        positive_sentiment.append(sentiment_dict['pos'])
+        neutral_sentiment.append(sentiment_dict['neu'])
+        print(sentiment_dict)
+        #print(compound_sentiment[count1])
+        count1 += 1
+
+    sentiment_dict_data = {
+        "Positive": positive_sentiment,
+        "Neutral": neutral_sentiment,
+        "Negative": negative_sentiment,
+        "Compound": compound_sentiment
+    }
+    sentiment_dict_df = pd.DataFrame(sentiment_dict_data)
+    sentiment_dict_df.to_csv('./sentiment_dict.csv')
+f.close()
+
+
+"""
     newList = []    # stores comments
     likeList = []   # stores No. of likes per comment
     compound_sentiment = [] # stores the compound value per comment
@@ -81,4 +117,5 @@ with open("all_comments.csv", "r") as f:
     # video_score = 90.3693
 
 f.close()
+"""
 
