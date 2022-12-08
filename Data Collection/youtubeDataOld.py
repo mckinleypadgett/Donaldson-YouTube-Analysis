@@ -18,10 +18,12 @@ channel_ids = ['UCfe2d71EQLZXhOLY9N7aqfg', # Donaldson
                'UCcsfE910TN0QI6ae4dWXI6w'  # Ashok Leyland
               ]
 """
-channelId = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/companies1.csv',
-                        usecols = ["UCvUbaC8BjzIGIIzI3gGq5BA"])
-channelID_2 = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/companies2.csv',
-                        usecols = ["UCcmHACp_jOo5-Mb3VVeDacw"])
+#channelId = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/companies1.csv',
+#                        usecols = ["UCvUbaC8BjzIGIIzI3gGq5BA"])
+channelId = pd.read_csv('./companies1.csv', usecols = ["UCvUbaC8BjzIGIIzI3gGq5BA"])
+channelID_2 = pd.read_csv('./companies2.csv', usecols = ["UCcmHACp_jOo5-Mb3VVeDacw"])
+#channelID_2 = pd.read_csv('C:/Users/12532/Donaldson-Youtube-Analysis/companies2.csv',
+#                        usecols = ["UCcmHACp_jOo5-Mb3VVeDacw"])
 # create a build service to pull data from 
 youtube = build('youtube', 'v3', developerKey=api_key)
 
@@ -35,7 +37,16 @@ for i in channelId:
     response = request.execute()
 
     for com in range(len(response['items'])):
-        comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+        video_request = youtube.videos().list(
+                        part='snippet',
+                        id = response['items'][com]['snippet']['videoId'])
+        video_response = video_request.execute()
+
+        comment_data = dict(channel_name = video_response['items'][0]['snippet']['channelTitle'],
+                            video_name = video_response['items'][0]['snippet']['title'],
+                            comment = response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+        comments.append(comment_data)
+        #comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
     
     next_page_token = response.get('nextPageToken')
     more_pages = True
@@ -52,7 +63,16 @@ for i in channelId:
             response = request.execute()
 
             for com in range(len(response['items'])):
-                comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+                video_request = youtube.videos().list(
+                        part='snippet',
+                        id = response['items'][com]['snippet']['videoId'])
+                video_response = video_request.execute()
+
+                comment_data = dict(channel_name = video_response['items'][0]['snippet']['channelTitle'],
+                            video_name = video_response['items'][0]['snippet']['title'],
+                            comment = response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+                comments.append(comment_data)
+                #comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
 
             next_page_token = response.get('nextPageToken')
 
@@ -64,7 +84,16 @@ for j in channelID_2:
     response = request.execute()
 
     for com in range(len(response['items'])):
-        comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+        video_request = youtube.videos().list(
+                        part='snippet',
+                        id = response['items'][com]['snippet']['videoId'])
+        video_response = video_request.execute()
+
+        comment_data = dict(channel_name = video_response['items'][0]['snippet']['channelTitle'],
+                            video_name = video_response['items'][0]['snippet']['title'],
+                            comment = response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+        comments.append(comment_data)
+        #comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
     
     next_page_token = response.get('nextPageToken')
     more_pages = True
@@ -81,12 +110,21 @@ for j in channelID_2:
             response = request.execute()
 
             for com in range(len(response['items'])):
-                comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+                video_request = youtube.videos().list(
+                        part='snippet',
+                        id = response['items'][com]['snippet']['videoId'])
+                video_response = video_request.execute()
+
+                comment_data = dict(channel_name = video_response['items'][0]['snippet']['channelTitle'],
+                            video_name = video_response['items'][0]['snippet']['title'],
+                            comment = response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
+                comments.append(comment_data)
+                #comments.append(response['items'][com]['snippet']['topLevelComment']['snippet']['textOriginal'])
 
             next_page_token = response.get('nextPageToken')
 
 comments_df = pd.DataFrame(comments)
-comments_df.to_csv('./all_comments.csv')
+comments_df.to_csv('./all_comments.csv', index=False, encoding='utf-8')
 
 
 

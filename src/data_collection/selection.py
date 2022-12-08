@@ -16,7 +16,7 @@ def main():
     channel_ids = []
 
     for row in reader:
-	    channel_ids.append(row[1])
+        channel_ids.append(row[1])
 
     #channel_statistics = get_channel_statistics(youtube, channel_ids[:50])
     #channel_stats_df = pd.DataFrame(channel_statistics)

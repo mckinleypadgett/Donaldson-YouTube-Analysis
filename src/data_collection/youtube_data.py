@@ -72,7 +72,7 @@ def get_video_ids(youtube, playlist_ids):
 					  publish_date = response['items'][i]['snippet']['publishedAt'])
 				all_video_data.append(video_data)
 
-				next_page_token = response.get('nextpagetoken')
+				next_page_token = response.get('nextPageToken')
 	return all_video_data
 
 # Gather comments from a YouTube video
